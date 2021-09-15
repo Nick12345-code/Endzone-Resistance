@@ -54,7 +54,7 @@ namespace EndzoneResistance.Cleon
 			float dis = 0;
 			foreach(Planet planet in planets)
 			{
-				if(planet.team == Team.Empty)
+				if (planet.team == Team.Empty || planet.team == Team.Player)
 				{
 					float distance = Vector3.Distance(enemyPlanets[0].gameObject.transform.position, planet.gameObject.transform.position);
 					if(-distance > dis || dis == 0)

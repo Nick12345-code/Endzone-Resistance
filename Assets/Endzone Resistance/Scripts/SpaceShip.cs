@@ -18,7 +18,10 @@ namespace EndzoneResistance.Cleon
 
 		private void Update()
 		{
-			transform.position = Vector3.MoveTowards(transform.position, target.gameObject.transform.position,speed * Time.deltaTime);
+            if (target != null)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, target.gameObject.transform.position, speed * Time.deltaTime); 
+            }
 		}
 
 		private void OnTriggerEnter(Collider _other)
