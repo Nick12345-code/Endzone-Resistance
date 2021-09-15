@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 using EndzoneResistance.Cleon;
 
 public class Selecting : MonoBehaviour
@@ -10,6 +11,12 @@ public class Selecting : MonoBehaviour
     [Header("Controls")]
     [SerializeField] private KeyCode select;
     [SerializeField] private KeyCode unselect;
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI currentShipsText;
+    [SerializeField] private TextMeshProUGUI shipsToSendText;
+    [SerializeField] private int shipsToSend;
+    [SerializeField] private int minShipsToSend;
+    [SerializeField] private Spawner spawner;
 
     private void Update()
     {
@@ -17,6 +24,8 @@ public class Selecting : MonoBehaviour
         if (Input.GetKeyDown(select)) Select();
         // else if select key is pressed and something is selected
         else if (Input.GetKeyDown(unselect) && isSelected) Unselect();
+
+        PlanetInfo();
     }
 
 
@@ -59,7 +68,8 @@ public class Selecting : MonoBehaviour
                 // if attackedPlanet is not owned by the player
                 if (attackedPlanet.team != Team.Player)
                 {
-                    // current selectedPlanet spaceships are sent to attack the current attackedPlanet 
+                    // selectedPlanet spaceships are sent to attackedPlanet 
+                    Attack();
                     print($"attacking {attackedPlanet.gameObject.name}");
                 }
                 else
@@ -78,5 +88,45 @@ public class Selecting : MonoBehaviour
         isSelected = false;
         selectedPlanet = null;
         attackedPlanet = null;
+        // display nothing
+        currentShipsText.text = "";
+        shipsToSendText.text = "";
+        shipsToSend = minShipsToSend;
+    }
+
+    private void PlanetInfo()
+    {
+        // if player owned planet is selected
+        if (isSelected)
+        {
+            // display current amount of ships on that planet
+            currentShipsText.text = selectedPlanet.GetComponent<Planet>().planetShips.ToString();
+            // choose how many ships to send
+            ChooseShips();
+        }
+    }
+
+    private void ChooseShips()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            shipsToSend += 5;
+            shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            shipsToSend -= 5;
+            shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
+        }
+        shipsToSendText.text = shipsToSend.ToString();
+    }
+
+    private void Attack()
+    {
+        if (selectedPlanet.GetComponent<Planet>().planetShips >= 5)
+        {
+            spawner.SpawnSpaceShip(shipsToSend, attackedPlanet, selectedPlanet);
+            selectedPlanet.GetComponent<Planet>().planetShips -= shipsToSend; 
+        }
     }
 }
