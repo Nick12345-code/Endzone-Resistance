@@ -31,7 +31,7 @@ public class Selecting : MonoBehaviour
         PlanetInfo();
     }
 
-
+    // player can select a friendly planet and a planet to attack
     private void Select()
     {
         // stores info on what ray hits
@@ -85,6 +85,7 @@ public class Selecting : MonoBehaviour
         }
     }
 
+    // player can unselect everything by pressing the unselect key
     private void Unselect()
     {
         // object is unselected
@@ -97,6 +98,7 @@ public class Selecting : MonoBehaviour
         shipsToSend = minShipsToSend;
     }
 
+    // updates the HUD to show information on selected planets
     private void PlanetInfo()
     {
         // if player owned planet is selected
@@ -109,26 +111,42 @@ public class Selecting : MonoBehaviour
         }
     }
 
+    // player can choose the number of ships they want to send to attack
     private void ChooseShips()
     {
+        // if increase button is pressed
         if (Input.GetKeyDown(increase))
         {
+            // increase how many ships you are sending by 1
             shipsToSend++;
+
+            // clamps how many ships you can send to a min and max
             shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
         }
+        // else if decrease button is pressed
         else if (Input.GetKeyDown(decrease))
         {
+            // decrease how many ships you are sending by 1
             shipsToSend--;
+
+            // clamps how many ships you can send to a min and max
             shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
         }
+
+        // updates the HUD text
         shipsToSendText.text = shipsToSend.ToString();
     }
 
+    // sends ships from the selected planet to attack another planet
     private void Attack()
     {
+        // if the planet has enough ships to send
         if (selectedPlanet.GetComponent<Planet>().planetShips > shipsToSend)
         {
+            // spawn ships that attack the attackPlanet sent from the selectedPlanet
             spawner.SpawnSpaceShip(shipsToSend, attackedPlanet, selectedPlanet);
+
+            // update the amount of ships on the planet that sent them
             selectedPlanet.GetComponent<Planet>().planetShips -= shipsToSend; 
         }
         else
