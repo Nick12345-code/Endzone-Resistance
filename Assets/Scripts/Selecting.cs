@@ -11,9 +11,12 @@ public class Selecting : MonoBehaviour
     [Header("Controls")]
     [SerializeField] private KeyCode select;
     [SerializeField] private KeyCode unselect;
+    [SerializeField] private KeyCode increase;
+    [SerializeField] private KeyCode decrease;
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI currentShipsText;
     [SerializeField] private TextMeshProUGUI shipsToSendText;
+    [SerializeField] private TextMeshProUGUI tips;
     [SerializeField] private int shipsToSend;
     [SerializeField] private int minShipsToSend;
     [SerializeField] private Spawner spawner;
@@ -56,7 +59,7 @@ public class Selecting : MonoBehaviour
                 {
                     // else selected planet is set to null
                     selectedPlanet = null;
-                    print("You don't control that planet currently!");
+                    tips.text = "You don't control that planet!";
                 }
             }
             // else if ray hits a Planet and something is already selected
@@ -76,7 +79,7 @@ public class Selecting : MonoBehaviour
                 {
                     // else attackedPlanet is set to null
                     attackedPlanet = null;
-                    print("You can't attack your own planets!");
+                    tips.text = "You can't attack your own planets!";
                 }
             }
         }
@@ -108,14 +111,14 @@ public class Selecting : MonoBehaviour
 
     private void ChooseShips()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(increase))
         {
-            shipsToSend += 5;
+            shipsToSend++;
             shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(decrease))
         {
-            shipsToSend -= 5;
+            shipsToSend--;
             shipsToSend = Mathf.Clamp(shipsToSend, minShipsToSend, selectedPlanet.GetComponent<Planet>().planetShips);
         }
         shipsToSendText.text = shipsToSend.ToString();
@@ -123,10 +126,14 @@ public class Selecting : MonoBehaviour
 
     private void Attack()
     {
-        if (selectedPlanet.GetComponent<Planet>().planetShips >= 5)
+        if (selectedPlanet.GetComponent<Planet>().planetShips > shipsToSend)
         {
             spawner.SpawnSpaceShip(shipsToSend, attackedPlanet, selectedPlanet);
             selectedPlanet.GetComponent<Planet>().planetShips -= shipsToSend; 
+        }
+        else
+        {
+            tips.text = "You don't have enough ships on this planet!";
         }
     }
 }
