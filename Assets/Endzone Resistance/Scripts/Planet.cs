@@ -31,6 +31,8 @@ namespace EndzoneResistance.Cleon
             {
                 UpGrade();
             }
+
+            PlanetColour();
         }
 
         private void SetUp()
@@ -94,6 +96,24 @@ namespace EndzoneResistance.Cleon
                     break;
             }
         }
+
+        void PlanetColour()
+        {
+            switch (team)
+            {
+                case Team.Player:
+                    this.transform.GetComponent<MeshRenderer>().material.color = Color.green;
+                    break;
+                case Team.AI:
+                    this.transform.GetComponent<MeshRenderer>().material.color = Color.red;
+                    break;
+                case Team.Empty:
+                    this.transform.GetComponent<MeshRenderer>().material.color = Color.white;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public enum Level
@@ -110,4 +130,5 @@ namespace EndzoneResistance.Cleon
         AI,
         Empty
     }
+
 }
